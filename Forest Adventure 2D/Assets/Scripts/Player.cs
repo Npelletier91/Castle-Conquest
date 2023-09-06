@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,13 +6,16 @@ using UnityStandardAssets.CrossPlatformInput;
 public class Player : MonoBehaviour
 {
     [SerializeField] float runSpeed = 10f;
+    [SerializeField] float jumpSpeed = 8f;
 
     Rigidbody2D myRigidBody2D;
+    Animator myAnimator;
 
     // Start is called before the first frame update
     void Start()
     {
         myRigidBody2D = GetComponent<Rigidbody2D>();
+        myAnimator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -19,15 +23,51 @@ public class Player : MonoBehaviour
     {
 
         Run();
+        Jump();
+    }
+
+    private void Jump()
+    {
+        bool isJumping = CrossPlatformInputManager.GetButtonDown("Jump");
+        if (isJumping)
+        {
+            Vector2 jumpVelocity = new Vector2(myRigidBody2D.velocity.x, jumpSpeed);
+            myRigidBody2D.velocity = jumpVelocity;
+        }
     }
 
     private void Run()
     {
+
         float controlThrow = CrossPlatformInputManager.GetAxis("Horizontal");
-
-        print(controlThrow);
-
         Vector2 playerVelocity = new Vector2(controlThrow * runSpeed, myRigidBody2D.velocity.y);
         myRigidBody2D.velocity = playerVelocity;
+
+
+        FlipSprite();
+
+
+        // get the running state to activate isRunning boolean
+        if (Mathf.Abs(myRigidBody2D.velocity.x) > Mathf.Epsilon)
+        {
+            myAnimator.SetBool("isRunning", true);
+        }
+        else
+        {
+            myAnimator.SetBool("isRunning", false);
+        }
+
     }
+
+    private void FlipSprite()
+    {
+        bool isRunning = Mathf.Abs(myRigidBody2D.velocity.x) > Mathf.Epsilon;
+
+        if (isRunning)
+        {
+            transform.localScale = new Vector2(Mathf.Sign(myRigidBody2D.velocity.x) ,1f);
+        }
+
+    }
+
 }

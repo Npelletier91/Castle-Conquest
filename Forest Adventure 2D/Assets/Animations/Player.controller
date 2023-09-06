@@ -67,7 +67,7 @@ AnimatorStateMachine:
     m_Position: {x: 570, y: 180, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8558321327930640748}
-    m_Position: {x: 398.28345, y: 306.91183, z: 0}
+    m_Position: {x: 250, y: 300, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -85,7 +85,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Running - Copy
+  m_Name: isRunning
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -199,7 +199,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Cimbling
+  m_Name: isCimbling
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
