@@ -28,6 +28,30 @@ public class Player : MonoBehaviour
 
         Run();
         Jump();
+        Climb();
+    }
+
+    private void Climb()
+    {
+        bool canClimb = myBoxCollider2D.IsTouchingLayers(LayerMask.GetMask("Climbing"));
+
+        if (canClimb)
+        {
+            float controlThrow = CrossPlatformInputManager.GetAxis("Vertical");
+            Vector2 playerVelocity = new Vector2(myRigidBody2D.velocity.x, controlThrow * runSpeed);
+            myRigidBody2D.velocity = playerVelocity;
+
+            myRigidBody2D.gravityScale = 0f;
+
+            myAnimator.SetBool("isClimbing", true);
+        }
+        else
+        {
+            myAnimator.SetBool("isClimbing", false);
+            myRigidBody2D.gravityScale = 1f;
+
+        }
+
     }
 
     private void Jump()
