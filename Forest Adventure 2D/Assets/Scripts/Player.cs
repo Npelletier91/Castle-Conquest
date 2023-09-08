@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
+using UnityEngine.SceneManagement;
+
 public class Player : MonoBehaviour
 {
     [SerializeField] float runSpeed = 10f;
@@ -37,11 +39,23 @@ public class Player : MonoBehaviour
             Jump();
             Climb();
             Attack();
+            ExitLevel();
 
             if (myRigidBody2D.IsTouchingLayers(LayerMask.GetMask("Enemy")))
             {
                 Hurt();
             }
+        }
+
+    }
+
+    private void ExitLevel()
+    {
+        if (!myBoxCollider2D.IsTouchingLayers(LayerMask.GetMask("Door"))) { return; }
+
+        if (CrossPlatformInputManager.GetButtonDown("Vertical"))
+        {
+            FindObjectOfType<ExitDoor>().StartLoadingNextScene();
         }
 
     }

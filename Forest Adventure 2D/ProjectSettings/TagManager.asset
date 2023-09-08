@@ -18,7 +18,7 @@ TagManager:
   - Player
   - World Confiner
   - Enemy
-  - 
+  - Door
   - 
   - 
   - 
@@ -52,6 +52,9 @@ TagManager:
     locked: 0
   - name: Enemy
     uniqueID: 651724327
+    locked: 0
+  - name: Door
+    uniqueID: 3156642097
     locked: 0
   - name: Player
     uniqueID: 2661551369
