@@ -7,11 +7,14 @@ public class Player : MonoBehaviour
 {
     [SerializeField] float runSpeed = 10f;
     [SerializeField] float jumpSpeed = 8f;
+    [SerializeField] Vector2 hurtSpeed = new Vector2(10f, 10f);
 
     Rigidbody2D myRigidBody2D;
     Animator myAnimator;
     BoxCollider2D myBoxCollider2D;
     PolygonCollider2D myPlayersFeet;
+
+    bool isHurtting = false;
 
     // Start is called before the first frame update
     void Start()
@@ -25,10 +28,15 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isHurtting)
+        {
+            Run();
+            Jump();
+            Climb();
 
-        Run();
-        Jump();
-        Climb();
+            Hurt();
+        }
+
     }
 
     private void Climb()
@@ -105,4 +113,23 @@ public class Player : MonoBehaviour
 
     }
 
+    private void Hurt()
+    {
+        if (myRigidBody2D.IsTouchingLayers(LayerMask.GetMask("Enemy")))
+        {
+            Vector2 hitVelocity = hurtSpeed * new Vector2(-transform.localScale.x, 1f);
+            myRigidBody2D.velocity = hitVelocity;
+
+            myAnimator.SetTrigger("IsHurt");
+            isHurtting = true;
+
+            StartCoroutine(StopHurting());
+        }
+
+    }
+    IEnumerator StopHurting()
+    {
+        yield return new WaitForSeconds(0.75f);
+        isHurtting = false;
+    }
 }
