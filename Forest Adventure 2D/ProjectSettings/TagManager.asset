@@ -15,9 +15,9 @@ TagManager:
   - 
   - Ground
   - Climbing
-  - 
-  - 
-  - 
+  - Player
+  - World Confiner
+  - Enemy
   - 
   - 
   - 
@@ -47,12 +47,18 @@ TagManager:
   - name: Background
     uniqueID: 866963475
     locked: 0
-  - name: Foreground
-    uniqueID: 3654159535
-    locked: 0
   - name: Climbing
     uniqueID: 2500332681
     locked: 0
+  - name: Enemy
+    uniqueID: 651724327
+    locked: 0
   - name: Player
     uniqueID: 2661551369
+    locked: 0
+  - name: Foreground
+    uniqueID: 3654159535
+    locked: 0
+  - name: Bomb
+    uniqueID: 603823131
     locked: 0

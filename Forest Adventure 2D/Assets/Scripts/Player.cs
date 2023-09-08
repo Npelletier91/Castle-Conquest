@@ -7,7 +7,10 @@ public class Player : MonoBehaviour
 {
     [SerializeField] float runSpeed = 10f;
     [SerializeField] float jumpSpeed = 8f;
+    [SerializeField] float attackRadius = 3f;
+
     [SerializeField] Vector2 hurtSpeed = new Vector2(10f, 10f);
+    [SerializeField] Transform hurtBox; 
 
     Rigidbody2D myRigidBody2D;
     Animator myAnimator;
@@ -33,10 +36,29 @@ public class Player : MonoBehaviour
             Run();
             Jump();
             Climb();
+            Attack();
 
-            Hurt();
+            if (myRigidBody2D.IsTouchingLayers(LayerMask.GetMask("Enemy")))
+            {
+                Hurt();
+            }
         }
 
+    }
+
+    private void Attack()
+    {
+        if (CrossPlatformInputManager.GetButtonDown("Fire1"))
+        {
+            myAnimator.SetTrigger("isAttacking");
+
+            Collider2D[] enemiesToHit = Physics2D.OverlapCircleAll(hurtBox.position, attackRadius, LayerMask.GetMask("Enemy"));
+
+            foreach (Collider2D enemy in enemiesToHit)
+            {
+                enemy.GetComponent<Enemy>().Dying();
+            }
+        }
     }
 
     private void Climb()
@@ -113,10 +135,8 @@ public class Player : MonoBehaviour
 
     }
 
-    private void Hurt()
+    public void Hurt()
     {
-        if (myRigidBody2D.IsTouchingLayers(LayerMask.GetMask("Enemy")))
-        {
             Vector2 hitVelocity = hurtSpeed * new Vector2(-transform.localScale.x, 1f);
             myRigidBody2D.velocity = hitVelocity;
 
@@ -124,7 +144,6 @@ public class Player : MonoBehaviour
             isHurtting = true;
 
             StartCoroutine(StopHurting());
-        }
 
     }
     IEnumerator StopHurting()
@@ -132,4 +151,10 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.75f);
         isHurtting = false;
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(hurtBox.position, attackRadius);
+    }
+
 }
