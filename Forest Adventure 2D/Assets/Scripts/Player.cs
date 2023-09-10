@@ -12,12 +12,15 @@ public class Player : MonoBehaviour
     [SerializeField] float attackRadius = 3f;
 
     [SerializeField] Vector2 hurtSpeed = new Vector2(10f, 10f);
-    [SerializeField] Transform hurtBox; 
+    [SerializeField] Transform hurtBox;
+
+    [SerializeField] AudioClip jumpingSFX, attackingSFX, gettingHitSFX, walking;
 
     Rigidbody2D myRigidBody2D;
     Animator myAnimator;
     BoxCollider2D myBoxCollider2D;
     PolygonCollider2D myPlayersFeet;
+    AudioSource audioSource;
 
     bool isHurtting = false;
 
@@ -28,6 +31,9 @@ public class Player : MonoBehaviour
         myAnimator = GetComponent<Animator>();
         myBoxCollider2D = GetComponent<BoxCollider2D>();
         myPlayersFeet = GetComponent<PolygonCollider2D>();
+        audioSource = GetComponent<AudioSource>();
+
+        myAnimator.SetTrigger("Appearing");
     }
 
     // Update is called once per frame
@@ -55,9 +61,19 @@ public class Player : MonoBehaviour
 
         if (CrossPlatformInputManager.GetButtonDown("Vertical"))
         {
-            FindObjectOfType<ExitDoor>().StartLoadingNextScene();
+            myAnimator.SetTrigger("Disappearing");
         }
+    }
 
+    public void LoadNextLevel()
+    {
+        FindObjectOfType<ExitDoor>().StartLoadingNextScene();
+        TurnOffRenderer();
+    }
+
+    public void TurnOffRenderer()
+    {
+        GetComponent<SpriteRenderer>().enabled = false;
     }
 
     private void Attack()
@@ -72,12 +88,14 @@ public class Player : MonoBehaviour
             {
                 enemy.GetComponent<Enemy>().Dying();
             }
+
+            audioSource.PlayOneShot(attackingSFX, 0.5f);
         }
     }
 
     private void Climb()
     {
-        bool canClimb = myBoxCollider2D.IsTouchingLayers(LayerMask.GetMask("Climbing"));
+        bool canClimb = myPlayersFeet.IsTouchingLayers(LayerMask.GetMask("Climbing"));
 
         if (canClimb)
         {
@@ -110,6 +128,9 @@ public class Player : MonoBehaviour
             {
                 Vector2 jumpVelocity = new Vector2(myRigidBody2D.velocity.x, jumpSpeed);
                 myRigidBody2D.velocity = jumpVelocity;
+
+                audioSource.PlayOneShot(jumpingSFX);
+
             }
         }
         
@@ -135,7 +156,23 @@ public class Player : MonoBehaviour
         {
             myAnimator.SetBool("isRunning", false);
         }
+    }
 
+    void RunningSound()
+    {
+        bool playerIsMoving = Mathf.Abs(myRigidBody2D.velocity.x) > Mathf.Epsilon;
+
+        if (playerIsMoving)
+        {
+            if (myPlayersFeet.IsTouchingLayers(LayerMask.GetMask("Ground")))
+            {
+                audioSource.PlayOneShot(walking);
+            }
+        }
+        else
+        {
+            audioSource.Stop();
+        }
     }
 
     private void FlipSprite()
@@ -151,13 +188,17 @@ public class Player : MonoBehaviour
 
     public void Hurt()
     {
-            Vector2 hitVelocity = hurtSpeed * new Vector2(-transform.localScale.x, 1f);
-            myRigidBody2D.velocity = hitVelocity;
 
-            myAnimator.SetTrigger("IsHurt");
-            isHurtting = true;
+        Vector2 hitVelocity = hurtSpeed * new Vector2(-transform.localScale.x, 1f);
+        myRigidBody2D.velocity = hitVelocity;
 
-            StartCoroutine(StopHurting());
+        myAnimator.SetTrigger("IsHurt");
+        audioSource.PlayOneShot(gettingHitSFX);
+        isHurtting = true;
+
+        StartCoroutine(StopHurting());
+
+        FindObjectOfType<GameSession>().ProcessPlayerDeath();
 
     }
     IEnumerator StopHurting()

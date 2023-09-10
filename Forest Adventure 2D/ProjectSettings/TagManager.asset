@@ -19,7 +19,7 @@ TagManager:
   - World Confiner
   - Enemy
   - Door
-  - 
+  - Collectable
   - 
   - 
   - 
@@ -50,11 +50,14 @@ TagManager:
   - name: Climbing
     uniqueID: 2500332681
     locked: 0
-  - name: Enemy
-    uniqueID: 651724327
-    locked: 0
   - name: Door
     uniqueID: 3156642097
+    locked: 0
+  - name: Collectable
+    uniqueID: 3291437133
+    locked: 0
+  - name: Enemy
+    uniqueID: 651724327
     locked: 0
   - name: Player
     uniqueID: 2661551369

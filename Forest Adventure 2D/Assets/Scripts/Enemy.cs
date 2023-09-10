@@ -6,12 +6,14 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] float enemyRunSpeed = 5f;
+    [SerializeField] AudioClip dyingSFX;
 
 
     Rigidbody2D enemyRigidBody2D;
     BoxCollider2D enemyBoxCollider2D;
     PolygonCollider2D enemyPolCollider2D;
     Animator myAnimator;
+    AudioSource audioSource;
 
 
 
@@ -23,6 +25,7 @@ public class Enemy : MonoBehaviour
         enemyBoxCollider2D = GetComponent<BoxCollider2D>();
         enemyPolCollider2D = GetComponent<PolygonCollider2D>();
         myAnimator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -36,13 +39,13 @@ public class Enemy : MonoBehaviour
 
     public void Dying()
     {
+
         myAnimator.SetTrigger("Die");
 
         GetComponent<CapsuleCollider2D>().enabled = false;
         enemyBoxCollider2D.enabled = false;
         enemyPolCollider2D.enabled = false;
 
-        enemyRigidBody2D.velocity = Vector2.zero;
         enemyRigidBody2D.bodyType = RigidbodyType2D.Static;
 
         StartCoroutine(EnemyDeath());
@@ -60,11 +63,9 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collider)
     {
-
-        FlipSprite();
-
+            FlipSprite();
     }
 
     private void enemyTouching()
@@ -89,11 +90,13 @@ public class Enemy : MonoBehaviour
 
     }
 
-
-
     private void FlipSprite()
     {
             transform.localScale = new Vector2(Mathf.Sign(enemyRigidBody2D.velocity.x), 1f);
     }
 
+    void PlayDeathSound()
+    {
+        audioSource.PlayOneShot(dyingSFX);
+    }
 }
