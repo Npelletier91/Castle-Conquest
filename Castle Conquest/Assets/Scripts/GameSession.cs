@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class GameSession : MonoBehaviour
 {
+    private float startTime;
+    public Text timerText;
+    private bool isTimerRunning = true;
 
     [SerializeField] int playerLives = 3;
     [SerializeField] int playerScore = 0;
@@ -30,10 +33,20 @@ public class GameSession : MonoBehaviour
 
     private void Start()
     {
-        livesText.text = playerLives.ToString();
         scoreText.text = playerScore.ToString();
+
+        startTime = Time.time;
     }
 
+    private void Update()
+    {
+        if (isTimerRunning)
+        {
+            float elapsedTime = Time.time - startTime;
+            UpdateTimerText(elapsedTime);
+        }
+
+    }
 
 
     public void ProcessPlayerDeath()
@@ -44,7 +57,9 @@ public class GameSession : MonoBehaviour
         }
         else
         {
-            ResetGame();
+            TakeLife();
+            StopTimer();
+            SceneManager.LoadScene(5);
         }
     }
 
@@ -56,7 +71,6 @@ public class GameSession : MonoBehaviour
         playerLives--;
 
         UpdateHearts();
-        livesText.text = playerLives.ToString();
     }
 
     public void IncreaseLife()
@@ -70,7 +84,6 @@ public class GameSession : MonoBehaviour
 
         UpdateHearts();
 
-        livesText.text = playerLives.ToString();
     }
 
     public void UpdateHearts()
@@ -99,6 +112,26 @@ public class GameSession : MonoBehaviour
     {
         SceneManager.LoadScene(0);
         Destroy(gameObject);
+    }
+
+    private void UpdateTimerText(float time)
+    {
+        string minutes = Mathf.Floor(time / 60).ToString("00");
+        string seconds = Mathf.Floor(time % 60).ToString("00");
+        string milliseconds = Mathf.Floor((time * 1000) % 1000).ToString("000");
+
+        timerText.text = minutes + ":" + seconds + ":" + milliseconds;
+    }
+
+    public void StopTimer()
+    {
+        isTimerRunning = false;
+    }
+
+    public void StartTimer()
+    {
+        isTimerRunning = true;
+        startTime = Time.time;
     }
 }
 

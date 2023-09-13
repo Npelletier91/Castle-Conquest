@@ -20,7 +20,7 @@ TagManager:
   - Enemy
   - Door
   - Collectable
-  - 
+  - DeathTiles
   - 
   - 
   - 
@@ -67,4 +67,7 @@ TagManager:
     locked: 0
   - name: Bomb
     uniqueID: 603823131
+    locked: 0
+  - name: DeathTiles
+    uniqueID: 3693058425
     locked: 0

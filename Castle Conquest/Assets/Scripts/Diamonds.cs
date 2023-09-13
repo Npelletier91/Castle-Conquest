@@ -10,7 +10,7 @@ public class Diamonds : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        AudioSource.PlayClipAtPoint(diamondPickUpSFX, Camera.main.transform.position, .5f);
+        AudioSource.PlayClipAtPoint(diamondPickUpSFX, Camera.main.transform.position, .4f);
 
         FindObjectOfType<GameSession>().IncreaseScore(diamondValue);
         Destroy(gameObject);

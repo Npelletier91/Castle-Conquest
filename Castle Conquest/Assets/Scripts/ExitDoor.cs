@@ -25,6 +25,7 @@ public class ExitDoor : MonoBehaviour
 
     public void StartLoadingNextScene()
     {
+
         GetComponent<Animator>().SetTrigger("Close");
 
         StartCoroutine(LoadNextLevel());
@@ -36,6 +37,8 @@ public class ExitDoor : MonoBehaviour
 
         var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex + 1);
+
+
     }
     void PlayOpenDoorSFX()
     {
@@ -44,5 +47,10 @@ public class ExitDoor : MonoBehaviour
     void PlayCloseDoorSFX()
     {
         audioSource.PlayOneShot(closingDoorSFX);
+    }
+
+    void EndTimer()
+    {
+        FindObjectOfType<GameSession>().StopTimer();
     }
 }

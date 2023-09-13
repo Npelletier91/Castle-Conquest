@@ -17,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Success Menu.unity
     guid: b23f46c7ce7871542a4d8dc4e9e89a02
+  - enabled: 1
+    path: Assets/Scenes/Secret Success.unity
+    guid: badcec9d172694d47b3ce47932bd3553
+  - enabled: 1
+    path: Assets/Scenes/Game Over.unity
+    guid: a9a8530d1b878034582715507886246f
   m_configObjects: {}

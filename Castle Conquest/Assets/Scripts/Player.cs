@@ -46,6 +46,7 @@ public class Player : MonoBehaviour
             Climb();
             Attack();
             ExitLevel();
+            FallDeath();
 
             if (myRigidBody2D.IsTouchingLayers(LayerMask.GetMask("Enemy")))
             {
@@ -95,7 +96,7 @@ public class Player : MonoBehaviour
 
     private void Climb()
     {
-        bool canClimb = myPlayersFeet.IsTouchingLayers(LayerMask.GetMask("Climbing"));
+        bool canClimb = myBoxCollider2D.IsTouchingLayers(LayerMask.GetMask("Climbing"));
 
         if (canClimb)
         {
@@ -134,6 +135,19 @@ public class Player : MonoBehaviour
             }
         }
         
+    }
+
+    private void FallDeath()
+    {
+        bool fell = myPlayersFeet.IsTouchingLayers(LayerMask.GetMask("DeathTiles"));
+
+        if (fell)
+        {
+            audioSource.PlayOneShot(gettingHitSFX);
+            StartCoroutine(StopHurting());
+
+            FindObjectOfType<GameSession>().ProcessPlayerDeath();
+        }
     }
 
     private void Run()
