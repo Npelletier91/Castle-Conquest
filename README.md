@@ -2,6 +2,10 @@
 
 Castle Conquest is a 2D platform runner game developed in C# using Unity. In this adventurous game, players aim to collect coins, defeat enemies, progress through levels, and discover secret coins and hearts.
 
+<img src="https://github.com/Npelletier91/Castle-Conquest-Game/assets/129113700/5afa5852-11fe-47c0-929f-5563831db2cd" width="400" height="255">
+
+
+
 ## Key Features
 
 - **2D Platform Runner**: Navigate through captivating levels filled with challenges and obstacles.
