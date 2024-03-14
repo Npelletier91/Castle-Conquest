@@ -49,9 +49,6 @@ Describe the gameplay mechanics and controls here, for example:
 - Collect coins by running into them.
 - Defeat enemies by the left mouse click for the attack button.
 
-## Screenshots/Videos
-
-(Add screenshots or videos showcasing different gameplay aspects, environments, or challenges.)
 
 ## How to Run
 
