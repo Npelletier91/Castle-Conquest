@@ -24,6 +24,11 @@ public class Player : MonoBehaviour
 
     bool isHurtting = false;
 
+
+
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -60,7 +65,7 @@ public class Player : MonoBehaviour
     {
         if (!myBoxCollider2D.IsTouchingLayers(LayerMask.GetMask("Door"))) { return; }
 
-        if (CrossPlatformInputManager.GetButtonDown("Vertical"))
+        if (CrossPlatformInputManager.GetButtonDown("Vertical") || GameSession.instance.isClimbingUp)  // Up button pressed
         {
             myAnimator.SetTrigger("Disappearing");
         }
@@ -79,7 +84,7 @@ public class Player : MonoBehaviour
 
     private void Attack()
     {
-        if (CrossPlatformInputManager.GetButtonDown("Fire1"))
+        if (CrossPlatformInputManager.GetButtonDown("Fire1") || GameSession.instance.isAttackingButton)
         {
             myAnimator.SetTrigger("isAttacking");
 
@@ -91,51 +96,68 @@ public class Player : MonoBehaviour
             }
 
             audioSource.PlayOneShot(attackingSFX, 0.5f);
+
+            GameSession.instance.isAttackingButton = false;
         }
     }
 
+
+
     private void Climb()
     {
+        // Check if the player is touching a climbable layer
         bool canClimb = myBoxCollider2D.IsTouchingLayers(LayerMask.GetMask("Climbing"));
 
         if (canClimb)
         {
+            // Combine InputManager and button inputs
             float controlThrow = CrossPlatformInputManager.GetAxis("Vertical");
+            if (GameSession.instance.isClimbingUp) controlThrow = 1f;   // Up button pressed
+            if (GameSession.instance.isClimbingDown) controlThrow = -1f; // Down button pressed
+
+            // Apply climbing velocity
             Vector2 playerVelocity = new Vector2(myRigidBody2D.velocity.x, controlThrow * runSpeed);
             myRigidBody2D.velocity = playerVelocity;
 
+            // Disable gravity while climbing
             myRigidBody2D.gravityScale = 0f;
 
+            // Update animator
             myAnimator.SetBool("isClimbing", true);
         }
         else
         {
+            // Reset climbing state when not climbing
             myAnimator.SetBool("isClimbing", false);
             myRigidBody2D.gravityScale = 1f;
-
         }
-
     }
+
+
 
     private void Jump()
     {
 
         bool canJump = myPlayersFeet.IsTouchingLayers(LayerMask.GetMask("Ground"));
-        bool isJumping = CrossPlatformInputManager.GetButtonDown("Jump");
+        bool isJumping = CrossPlatformInputManager.GetButtonDown("Jump") || GameSession.instance.isJumpingButton;
 
         if (canJump)
         {
             if (isJumping)
-            {
+                {
                 Vector2 jumpVelocity = new Vector2(myRigidBody2D.velocity.x, jumpSpeed);
                 myRigidBody2D.velocity = jumpVelocity;
 
                 audioSource.PlayOneShot(jumpingSFX);
 
+                GameSession.instance.isJumpingButton = false;
+
             }
         }
         
     }
+
+
 
     private void FallDeath()
     {
@@ -152,25 +174,23 @@ public class Player : MonoBehaviour
 
     private void Run()
     {
-
+        // Combine InputManager axis and button states
         float controlThrow = CrossPlatformInputManager.GetAxis("Horizontal");
+
+        if (GameSession.instance.isMovingRight) controlThrow = 1; // Override to move right if the button is pressed
+        if (GameSession.instance.isMovingLeft) controlThrow = -1; // Override to move left if the button is pressed
+
+        // Set player velocity
         Vector2 playerVelocity = new Vector2(controlThrow * runSpeed, myRigidBody2D.velocity.y);
         myRigidBody2D.velocity = playerVelocity;
 
-
         FlipSprite();
 
-
-        // get the running state to activate isRunning boolean
-        if (Mathf.Abs(myRigidBody2D.velocity.x) > Mathf.Epsilon)
-        {
-            myAnimator.SetBool("isRunning", true);
-        }
-        else
-        {
-            myAnimator.SetBool("isRunning", false);
-        }
+        // Update animator's "isRunning" parameter
+        myAnimator.SetBool("isRunning", Mathf.Abs(myRigidBody2D.velocity.x) > Mathf.Epsilon);
     }
+
+
 
     void RunningSound()
     {

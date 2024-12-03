@@ -8,7 +8,17 @@ public class GameSession : MonoBehaviour
 {
     private float startTime;
     public Text timerText;
-    private bool isTimerRunning = true;
+    public bool isTimerRunning = false;
+
+    public bool isClimbingUp = false;  // Track if the "Climb Up" button is pressed
+    public bool isClimbingDown = false; // Track if the "Climb Down" button is pressed
+    public bool isMovingLeft = false;
+    public bool isJumpingButton = false; // To track the jump button press
+    public bool isAttackingButton = false;
+    public bool isMovingRight = false;
+
+
+    public static GameSession instance;
 
     [SerializeField] int playerLives = 3;
     [SerializeField] int playerScore = 0;
@@ -19,14 +29,15 @@ public class GameSession : MonoBehaviour
 
     private void Awake()
     {
-        int numberOfSessions = FindObjectsOfType<GameSession>().Length;
 
-        if (numberOfSessions > 1)
+        if (instance != null)
         {
             Destroy(gameObject);
+            return;
         }
         else
         {
+            instance = this;
             DontDestroyOnLoad(gameObject);
         }
     }
@@ -34,8 +45,29 @@ public class GameSession : MonoBehaviour
     private void Start()
     {
         scoreText.text = playerScore.ToString();
+    }
 
-        startTime = Time.time;
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to sceneLoaded event
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded; // Unsubscribe from sceneLoaded event
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Check if the loaded scene is "Level 1"
+        if (scene.name == "Level 1")
+        {
+            StartTimer(); // Start the timer
+        }
+        else
+        {
+            StopTimer(); // Stop the timer in other scenes, if necessary
+        }
     }
 
     private void Update()
@@ -59,7 +91,7 @@ public class GameSession : MonoBehaviour
         {
             TakeLife();
             StopTimer();
-            SceneManager.LoadScene(5);
+            SceneManager.LoadScene("Game Over");
         }
     }
 
@@ -133,6 +165,66 @@ public class GameSession : MonoBehaviour
         isTimerRunning = true;
         startTime = Time.time;
     }
+
+
+
+
+    // UI Button Methods
+    public void OnClimbUpButtonDown()
+    {
+        isClimbingUp = true;
+    }
+
+    public void OnClimbUpButtonUp()
+    {
+        isClimbingUp = false;
+    }
+
+    public void OnClimbDownButtonDown()
+    {
+        isClimbingDown = true;
+    }
+
+    public void OnClimbDownButtonUp()
+    {
+        isClimbingDown = false;
+    }
+
+    public void OnRightButtonDown()
+    {
+        isMovingRight = true;
+    }
+
+    public void OnRightButtonUp()
+    {
+        isMovingRight = false;
+    }
+
+    public void OnLeftButtonDown()
+    {
+        isMovingLeft = true;
+    }
+
+    public void OnLeftButtonUp()
+    {
+        isMovingLeft = false;
+
+
+    }
+
+    public void OnJumpButtonDown()
+    {
+        isJumpingButton = true;
+    }
+
+
+    public void OnAttackDown()
+    {
+        isAttackingButton = true;
+    }
+
+
+
 }
 
 
